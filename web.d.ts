@@ -1,1 +1,1 @@
-export * from "./dist/web";
+export * from "./dist/src/web";
