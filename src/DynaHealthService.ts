@@ -1,10 +1,9 @@
 import {IError} from "dyna-interfaces";
 import {
-  DynaNodeService, IDynaNodeServiceCommandConfig,
+  DynaNodeService,
+  IDynaNodeServiceCommandConfig,
   DynaNodeMessageT,
-} from "dyna-node/node";
-
-import {importUniversal} from "../dyna/universalImport";
+} from "dyna-node/dist/commonJs/node";
 
 import {
   IInstanceStats,
@@ -22,6 +21,12 @@ import {
 
 export interface IDynaHealthServiceConfig {
   parallelRequests?: number;
+  disk: {                                                   // physical or virtual disk access
+    set: (key: string, data: any) => Promise<void>;
+    get: (key: string) => Promise<any>;
+    del: (key: string) => Promise<void>;
+    delAll: () => Promise<void>;
+  };
   serviceRegistration: {
     serverDynaNodeAddress: string;
     serviceConnectionId: string;
@@ -41,7 +46,7 @@ export class DynaHealthService {
   private listeners: IListener[] = [];
 
   constructor(private readonly config: IDynaHealthServiceConfig) {
-    this.service = new (importUniversal<typeof DynaNodeService>("DynaNodeService"))({
+    this.service = new DynaNodeService({
       ...this.config,
 
       onCommand: {
@@ -110,7 +115,7 @@ export class DynaHealthService {
   }
 
   public unregisterListener(listener: IListener): void {
-    this.listeners = this.listeners.filter(scanListener => scanListener.replyOfId !== listener.replyOfId)
+    this.listeners = this.listeners.filter(scanListener => scanListener.replyOfId !== listener.replyOfId);
   }
 
   private pushNotification(stats: IInstanceStats): void {
@@ -132,7 +137,7 @@ export class DynaHealthService {
               error,
             });
           }
-        })
+        });
     });
   }
 

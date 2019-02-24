@@ -1,10 +1,10 @@
 import "jest";
 import {guid} from "dyna-guid";
 import {getMemoryStats} from "dyna-memory-stats";
-import {DynaNodeClient, DynaNodeMessageT, DynaNodeServer, IDynaNodeServerConfig, IError} from "dyna-node/node";
+import {DynaNodeClient, DynaNodeMessageT, DynaNodeServer, DynaRamDisk, IDynaNodeServerConfig, IError} from "dyna-node/dist/commonJs/node";
 
-import {COMMAND_healthStatsUpdate, DynaHealthService, EInstanceType, ICOMMAND_addHealthStats_data, IDynaHealthServiceConfig, IInstanceStats} from "../../src/node";
-import {COMMAND_addHealthStats, COMMAND_registerNotificationHealthStats} from "../../src/node";
+import {COMMAND_healthStatsUpdate, DynaHealthService, EInstanceType, ICOMMAND_addHealthStats_data, IDynaHealthServiceConfig, IInstanceStats} from "../../src";
+import {COMMAND_addHealthStats, COMMAND_registerNotificationHealthStats} from "../../src";
 
 let dynaNodeServer: DynaNodeServer;
 let dynaHealthService: DynaHealthService;
@@ -28,7 +28,15 @@ const healthServiceConnectionId: string = Object.keys(serverConfig.connectionIds
 const serverDynaNodeAddress: string = serverConfig.addresses.internal;
 const healthServiceAddress: string = `${healthServiceConnectionId}@${serverDynaNodeAddress}`;
 
+const memory = new DynaRamDisk();
+
 const dynaHealthServiceConfig: IDynaHealthServiceConfig = {
+  disk: {
+    set: (key, data) => memory.set('service', key, data),
+    get: (key) => memory.get('service', key),
+    del: (key) => memory.get('service', key),
+    delAll: () => memory.delContainer('service'),
+  },
   parallelRequests: 50,
   serviceRegistration: {
     serviceConnectionId: healthServiceConnectionId,
@@ -45,7 +53,7 @@ describe("Search airport", () => {
   const otherMessages: DynaNodeMessageT<any, any>[] = [];
   const serviceId = guid();
   let sendHealthIntervalHandler: any = null;
-  let healthStatsCount: number = null;
+  let healthStatsCount: number = 0;
 
   it("should create dyna node server", (done: Function) => {
     dynaNodeServer = new DynaNodeServer(serverConfig);
@@ -98,7 +106,7 @@ describe("Search airport", () => {
             otherMessages.push(message);
         }
         surveillanceDevice
-          .reply(message) // send acknowledge (is required)
+          .reply(message, {command: "roger"}) // send acknowledge (is required)
           .catch(error => console.error("Cannot send acknowledge for COMMAND_healthStatsUpdate", error));
       },
     })
@@ -164,6 +172,10 @@ describe("Search airport", () => {
   });
 
   // end of the test
+
+  it("waits for heartbeat to be completed", (done: () => void) => {
+    setTimeout(done, 500);
+  });
 
   it("should stop the client", (done: () => void) => {
     serviceDevice.closeAllConnections().then(() => done());
