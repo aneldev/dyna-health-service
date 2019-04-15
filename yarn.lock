@@ -2998,10 +2998,10 @@ dyna-node-console@^1.0.7:
   dependencies:
     chalk "^2.4.1"
 
-dyna-node@*:
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/dyna-node/-/dyna-node-0.7.5.tgz#4f570d442c233f77a93be63ac32f24a80d1c4b3b"
-  integrity sha512-0+70hNi/aKQAlVQ8t7LLdfrqUJ6VgwqhxNTCuQZ2jtxhHgUxZQVthjv8SOFiWWpzFS1lTiyZpZqu5T9rF7XeGA==
+dyna-node@^0.7.13:
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/dyna-node/-/dyna-node-0.7.13.tgz#43873cb18f99e1dc273df39adda8453a5b85fe10"
+  integrity sha512-ANncV7Mco94A0q/gfZRGOfke3gt6CY9Gg5aHQbZlIkBaFNNsFc7QcZHizg6aTin2hcbjscbG8qlBettiCwrQvg==
   dependencies:
     dyna-crypt "^1.1.1"
     dyna-guid "^1.0.8"

@@ -50,7 +50,7 @@
   "dependencies": {
     "dyna-interfaces": "^4.0.7",
     "dyna-memory-stats": "^1.0.3",
-    "dyna-node": "*"
+    "dyna-node": "^0.7.13"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
