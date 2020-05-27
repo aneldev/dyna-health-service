@@ -24,7 +24,7 @@ export declare class DynaHealthService {
     private listeners;
     constructor(config: IDynaHealthServiceConfig);
     start(): Promise<void>;
-    readonly active: boolean;
+    get active(): boolean;
     stop(): Promise<void>;
     registerListener(listener: IListener): void;
     unregisterListener(listener: IListener): void;

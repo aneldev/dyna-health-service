@@ -2,7 +2,6 @@ import {IError} from "dyna-interfaces";
 import {
   DynaNodeService,
   IDynaNodeServiceCommandConfig,
-  DynaNodeMessageT,
 } from "dyna-node/dist/commonJs/node";
 
 import {
@@ -49,6 +48,12 @@ export class DynaHealthService {
     this.service = new DynaNodeService({
       ...this.config,
 
+      publicCommands: [
+        COMMAND_addHealthStats,
+        COMMAND_registerNotificationHealthStats,
+        COMMAND_unregisterNotificationHealthStats,
+      ],
+
       onCommand: {
         [COMMAND_addHealthStats]: {
           execute: ({message, next}) => {
@@ -74,11 +79,6 @@ export class DynaHealthService {
             next();
           },
         } as IDynaNodeServiceCommandConfig<null, null>
-      },
-
-      onReplySendFail: (message: DynaNodeMessageT<any, any>, error: any, retry: () => void, skip: () => void, stop: () => void) => {
-        console.error(`${this.service.friendlyName}/onReplySendFail`, 'Cannot send this reply, message will be skipped (will be lost)', {message, error});
-        skip();
       },
 
       onServiceRegistrationFail: (error: IError) => {

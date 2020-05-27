@@ -19,7 +19,11 @@ var DynaHealthService = /** @class */ (function () {
         var _this = this;
         this.config = config;
         this.listeners = [];
-        this.service = new node_1.DynaNodeService(__assign({}, this.config, { onCommand: (_a = {},
+        this.service = new node_1.DynaNodeService(__assign(__assign({}, this.config), { publicCommands: [
+                interfaces_1.COMMAND_addHealthStats,
+                interfaces_1.COMMAND_registerNotificationHealthStats,
+                interfaces_1.COMMAND_unregisterNotificationHealthStats,
+            ], onCommand: (_a = {},
                 _a[interfaces_1.COMMAND_addHealthStats] = {
                     execute: function (_a) {
                         var message = _a.message, next = _a.next;
@@ -47,10 +51,7 @@ var DynaHealthService = /** @class */ (function () {
                         next();
                     },
                 },
-                _a), onReplySendFail: function (message, error, retry, skip, stop) {
-                console.error(_this.service.friendlyName + "/onReplySendFail", 'Cannot send this reply, message will be skipped (will be lost)', { message: message, error: error });
-                skip();
-            }, onServiceRegistrationFail: function (error) {
+                _a), onServiceRegistrationFail: function (error) {
                 console.error(_this.service.friendlyName + "/onServiceRegistrationFail", 'Service registration failed', { error: error });
             }, onMessageQueueError: function (error) {
                 console.error(_this.service.friendlyName + "/onMessageQueueError", 'Message Queue error (disk error?)', { error: error });

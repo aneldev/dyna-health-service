@@ -1,7 +1,7 @@
 import "jest";
 import {guid} from "dyna-guid";
 import {getMemoryStats} from "dyna-memory-stats";
-import {DynaNodeClient, DynaNodeMessageT, DynaNodeServer, DynaRamDisk, IDynaNodeServerConfig, IError} from "dyna-node/dist/commonJs/node";
+import {DynaNodeClient, DynaNodeMessage, DynaNodeServer, DynaRamDisk, IDynaNodeServerConfig, IError} from "dyna-node/dist/commonJs/node";
 
 import {COMMAND_healthStatsUpdate, DynaHealthService, EInstanceType, ICOMMAND_addHealthStats_data, IDynaHealthServiceConfig, IInstanceStats} from "../../src";
 import {COMMAND_addHealthStats, COMMAND_registerNotificationHealthStats} from "../../src";
@@ -50,7 +50,7 @@ const SEND_HEALTH_STATS_TIMEOUT = 100;
 
 describe("Search airport", () => {
   const healthStats: IInstanceStats[] = [];
-  const otherMessages: DynaNodeMessageT<any, any>[] = [];
+  const otherMessages: DynaNodeMessage[] = [];
   const serviceId = guid();
   let sendHealthIntervalHandler: any = null;
   let healthStatsCount: number = 0;
@@ -97,7 +97,7 @@ describe("Search airport", () => {
       to: healthServiceAddress,
       command: COMMAND_registerNotificationHealthStats,
       multiReplies: true,
-      onReply: (message: DynaNodeMessageT<any, any>, stopMultipleReplies: () => boolean) => {
+      onReply: (message: DynaNodeMessage, stopMultipleReplies: () => boolean) => {
         switch (message.command) {
           case COMMAND_healthStatsUpdate:
             healthStats.push(message.data);
@@ -139,7 +139,7 @@ describe("Search airport", () => {
 
   it("should surveillance device close (network interruption)", (done: () => void) => {
     setTimeout(() => {
-      surveillanceDevice.closeAllConnections().then(() => done());
+      surveillanceDevice.stopConnections().then(() => done());
     }, SEND_HEALTH_STATS_TIMEOUT * 6);
   });
 
@@ -178,7 +178,7 @@ describe("Search airport", () => {
   });
 
   it("should stop the client", (done: () => void) => {
-    serviceDevice.closeAllConnections().then(() => done());
+    serviceDevice.stopConnections().then(() => done());
   });
 
   it("should stop the health service", (done: () => void) => {
